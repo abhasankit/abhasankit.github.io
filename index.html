@@ -21,6 +21,32 @@
       margin-right: 0;
       width: 100%;
       border-radius: 0;
+      /* Add gradient border effect */
+      position: relative;
+      z-index: 1;
+      background: transparent;
+    }
+    .marathon-card .card-inner {
+      background: #fff;
+      border-radius: 0;
+      position: relative;
+      z-index: 2;
+      /* Padding for border effect */
+      box-shadow: none;
+    }
+    .marathon-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      border-top: 4px solid;
+      border-image: linear-gradient(90deg, #a5b4fc 0%, #c7d2fe 100%);
+      border-image-slice: 1;
+      border-radius: 0;
+      pointer-events: none;
+    }
+    .marathon-card:first-child::before {
+      border-top: none;
     }
     .marathon-card .p-6 {
       padding: 1rem !important;
@@ -200,7 +226,7 @@
     const marathons = [
       {
         name: "Stonehill Marathon 2025",
-        date: "2025-09-14",
+        date: "2025-09-07",
         city: "Bangalore",
         description: "5k, 10k and Half Marathon",
         registrationLink: "https://raadiantsports.com/registration/",
@@ -320,7 +346,7 @@
           </a>` : "";
 
         card.innerHTML = `
-          <div class="p-6">
+          <div class="card-inner p-6">
             <div class="flex items-center justify-between mb-1">
               <h3 class="text-lg font-bold text-gray-800">${marathon.name}</h3>
               <a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors ml-2" title="Route Info">
@@ -386,6 +412,9 @@
 
         return isUpcoming && matchesSearch && matchesRace && matchesFromDate && matchesToDate;
       });
+
+      // Sort by soonest event first
+      filteredMarathons.sort((a, b) => new Date(a.date) - new Date(b.date));
 
       showAll = false;
       displayMarathons(filteredMarathons);
