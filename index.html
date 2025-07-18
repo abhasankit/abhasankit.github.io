@@ -12,10 +12,16 @@
     }
     .card-hover {
       transition: all 0.3s ease;
+      min-height: 0;
     }
-    .card-hover:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    /* Make cards smaller */
+    .marathon-card {
+      max-width: 340px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .marathon-card .p-6 {
+      padding: 1rem !important; /* Reduce padding */
     }
     .animate-fade-in {
       animation: fadeIn 0.5s ease-in-out;
@@ -40,55 +46,76 @@
     .search-focus {
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
+    .center-logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 220px;
+      margin-bottom: 0;
+    }
+    .center-logo .logo-bg {
+      background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+      border-radius: 50%;
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 24px 0 rgba(102,126,234,0.10);
+    }
+    .center-logo img {
+      max-width: 60vw;
+      max-height: 60vh;
+      width: auto;
+      height: auto;
+      display: block;
+      border-radius: 50%;
+      background: transparent;
+    }
+    .floating-buttons {
+      position: fixed;
+      top: 1.5rem;
+      right: 2rem;
+      z-index: 100;
+      display: flex;
+      gap: 0.75rem;
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
-  <!-- Navigation -->
-  <nav class="glass-effect sticky top-0 z-50">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <div class="flex items-center">
-          <div class="flex items-center space-x-2">
-            <img src="https://i.ibb.co/ZRLT8bH9/Whats-App-Image-2025-07-16-at-17-29-51.jpg" alt="Running Ninjas Logo" class="h-10 w-auto" />
-            <span class="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-pink-400 bg-clip-text text-transparent">Running Ninjas</span>
-          </div>
-        </div>
-        
-        <div class="flex items-center space-x-3">
-          <!-- Search Toggle -->
-          <button id="toggleSearch" class="p-2 rounded-full hover:bg-white/20 transition-colors">
-            <i data-feather="search" class="w-5 h-5 text-white"></i>
-          </button>
-          
-          <!-- Filter Toggle -->
-          <button id="toggleFilters" class="p-2 rounded-full hover:bg-white/20 transition-colors">
-            <i data-feather="filter" class="w-5 h-5 text-white"></i>
-          </button>
-          
-          <!-- Mobile Menu -->
-          <div class="relative">
-            <button id="toggleMenu" class="p-2 rounded-full hover:bg-white/20 transition-colors">
-              <i data-feather="menu" class="w-5 h-5 text-white"></i>
-            </button>
-            <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 hidden z-50">
-              <a href="#blog" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg transition-colors">
-                <i data-feather="book-open" class="w-4 h-4 inline mr-2"></i>Blog
-              </a>
-              <a href="#training" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                <i data-feather="target" class="w-4 h-4 inline mr-2"></i>Training Plans
-              </a>
-              <a href="#about" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-b-lg transition-colors">
-                <i data-feather="award" class="w-4 h-4 inline mr-2"></i>Race Reports
-              </a>
-            </div>
-          </div>
-        </div>
+  <div class="center-logo">
+    <div class="logo-bg">
+      <img src="https://i.ibb.co/ZRLT8bH9/Whats-App-Image-2025-07-16-at-17-29-51.jpg" alt="Running Ninjas Logo">
+    </div>
+  </div>
+
+  <!-- Floating Buttons -->
+  <div class="floating-buttons">
+    <button id="toggleSearch" class="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors shadow">
+      <i data-feather="search" class="w-5 h-5 text-purple-700"></i>
+    </button>
+    <button id="toggleFilters" class="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors shadow">
+      <i data-feather="filter" class="w-5 h-5 text-purple-700"></i>
+    </button>
+    <div class="relative">
+      <button id="toggleMenu" class="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors shadow">
+        <i data-feather="menu" class="w-5 h-5 text-purple-700"></i>
+      </button>
+      <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 hidden z-50">
+        <a href="#blog" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg transition-colors">
+          <i data-feather="book-open" class="w-4 h-4 inline mr-2"></i>Blog
+        </a>
+        <a href="#training" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+          <i data-feather="target" class="w-4 h-4 inline mr-2"></i>Training Plans
+        </a>
+        <a href="#about" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-b-lg transition-colors">
+          <i data-feather="award" class="w-4 h-4 inline mr-2"></i>Race Reports
+        </a>
       </div>
     </div>
-  </nav>
+  </div>
 
   <!-- Search Box -->
-  <div id="searchBox" class="container mx-auto px-4 sm:px-6 lg:px-8 mt-4 hidden animate-fade-in">
+  <div id="searchBox" class="container mx-auto px-4 sm:px-6 lg:px-8 mt-2 hidden animate-fade-in">
     <div class="relative">
       <input
         id="searchInput"
@@ -101,7 +128,7 @@
   </div>
 
   <!-- Filter Panel -->
-  <div id="filterPanel" class="container mx-auto px-4 sm:px-6 lg:px-8 mt-4 hidden animate-fade-in">
+  <div id="filterPanel" class="container mx-auto px-4 sm:px-6 lg:px-8 mt-2 hidden animate-fade-in">
     <div class="bg-white rounded-xl shadow-lg p-6">
       <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
         <i data-feather="sliders" class="w-5 h-5 mr-2 text-purple-600"></i>
@@ -132,20 +159,13 @@
   </div>
 
   <!-- Hero Section -->
-  <div class="container mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-    <div class="text-center mb-8">
-      <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-        Upcoming <span class="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Marathon Events</span>
-      </h1>
-      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-        Join the running community and discover amazing marathon events across India
-      </p>
-    </div>
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 mt-0">
+    <!-- Removed hero section text -->
   </div>
 
   <!-- Marathon Cards -->
-  <main class="container mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-    <div id="marathonList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-500">
+  <main class="container mx-auto px-4 sm:px-6 lg:px-8 pb-12 mt-0">
+    <div id="marathonList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 transition-all duration-500">
       <!-- Cards will be inserted by JavaScript -->
     </div>
 
@@ -278,10 +298,9 @@
 
       eventsToShow.forEach((marathon, index) => {
         const card = document.createElement("div");
-        card.className = "bg-white rounded-xl shadow-lg card-hover animate-fade-in overflow-hidden";
+        card.className = "bg-white rounded-xl shadow-lg card-hover marathon-card animate-fade-in overflow-hidden";
         card.style.animationDelay = `${index * 0.1}s`;
 
-        const timeUntil = getTimeUntilEvent(marathon.date);
         const busButton = marathon.busAvailable ? `
           <a href="https://script.google.com/macros/s/AKfycbwdn9bawk3GTHu355L-WHMHbwkHMmalVc4zgzltTGA/dev" 
              target="_blank"
@@ -299,34 +318,22 @@
           </a>` : "";
 
         card.innerHTML = `
-          <div class="relative">
-            <div class="h-32 bg-gradient-to-r from-purple-400 to-blue-500 flex items-center justify-center">
-              <div class="text-white text-center">
-                <div class="text-3xl mb-2">🏃‍♂️</div>
-                <div class="text-sm font-medium bg-white/20 px-3 py-1 rounded-full">
-                  ${timeUntil}
-                </div>
-              </div>
-            </div>
-            <div class="absolute top-4 right-4">
-              <a href="#" class="text-white hover:text-yellow-300 transition-colors" title="Route Info">
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="text-lg font-bold text-gray-800">${marathon.name}</h3>
+              <a href="#" class="text-gray-400 hover:text-yellow-500 transition-colors ml-2" title="Route Info">
                 <i data-feather="info" class="w-5 h-5"></i>
               </a>
             </div>
-          </div>
-          
-          <div class="p-6">
-            <h3 class="text-xl font-bold text-gray-800 mb-2">${marathon.name}</h3>
             <div class="flex items-center text-gray-600 mb-1">
               <i data-feather="calendar" class="w-4 h-4 mr-2"></i>
               <span class="text-sm">${formatDate(marathon.date)}</span>
             </div>
-            <div class="flex items-center text-gray-600 mb-3">
+            <div class="flex items-center text-gray-600 mb-2">
               <i data-feather="map-pin" class="w-4 h-4 mr-2"></i>
               <span class="text-sm">${marathon.city}</span>
             </div>
-            <p class="text-gray-700 text-sm mb-4">${marathon.description}</p>
-            
+            <p class="text-gray-700 text-sm mb-3">${marathon.description}</p>
             <div class="space-y-2">
               <a href="${marathon.registrationLink}" 
                  target="_blank"
