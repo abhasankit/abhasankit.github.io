@@ -14,14 +14,16 @@
       transition: all 0.3s ease;
       min-height: 0;
     }
-    /* Make cards smaller */
+    /* Make cards full width and remove margin */
     .marathon-card {
-      max-width: 340px;
-      margin-left: auto;
-      margin-right: auto;
+      max-width: none;
+      margin-left: 0;
+      margin-right: 0;
+      width: 100%;
+      border-radius: 0;
     }
     .marathon-card .p-6 {
-      padding: 1rem !important; /* Reduce padding */
+      padding: 1rem !important;
     }
     .animate-fade-in {
       animation: fadeIn 0.5s ease-in-out;
@@ -164,8 +166,8 @@
   </div>
 
   <!-- Marathon Cards -->
-  <main class="container mx-auto px-4 sm:px-6 lg:px-8 pb-12 mt-0">
-    <div id="marathonList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 transition-all duration-500">
+  <main class="container mx-auto px-0 sm:px-0 lg:px-0 pb-12 mt-0">
+    <div id="marathonList" class="grid grid-cols-1 gap-0 transition-all duration-500">
       <!-- Cards will be inserted by JavaScript -->
     </div>
 
