@@ -103,6 +103,16 @@
     .marathon-card .info-btn:active {
       background: #e0e7ff;
     }
+    /* Ensure feather icons are visible and inherit color */
+    .marathon-card i.feather,
+    .marathon-card svg.feather {
+      display: inline-block !important;
+      stroke: currentColor !important;
+      color: inherit !important;
+      width: 1.1em !important;
+      height: 1.1em !important;
+      vertical-align: middle !important;
+    }
     .marathon-card .meta {
       font-size: 0.98rem;
       color: #64748b;
@@ -356,11 +366,11 @@
 
     // Utility functions
     function formatDate(dateStr) {
-      const options = { 
+      const options = {
         weekday: 'short',
-        year: "numeric", 
-        month: "short", 
-        day: "numeric" 
+        year: "numeric",
+        month: "short",
+        day: "numeric"
       };
       return new Date(dateStr).toLocaleDateString(undefined, options);
     }
@@ -374,7 +384,7 @@
       const eventDate = new Date(dateStr);
       const diffTime = eventDate - now;
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      
+
       if (diffDays === 0) return "Today";
       if (diffDays === 1) return "Tomorrow";
       if (diffDays <= 7) return `${diffDays} days`;
@@ -384,15 +394,16 @@
 
     function displayMarathons(data) {
       marathonList.innerHTML = "";
-      
+
       if (data.length === 0) {
         emptyState.classList.remove("hidden");
         showMoreContainer.classList.add("hidden");
         return;
       }
-      
+
       emptyState.classList.add("hidden");
-      const eventsToShow = showAll ? data : data.slice(0, 6);
+      // Show only 3 by default, all if showAll is true
+      const eventsToShow = showAll ? data : data.slice(0, 3);
 
       eventsToShow.forEach((marathon, index) => {
         const card = document.createElement("div");
@@ -400,7 +411,7 @@
         card.style.animationDelay = `${index * 0.1}s`;
 
         const busButton = marathon.busAvailable ? `
-          <a href="https://script.google.com/macros/s/AKfycbwdn9bawk3GTHu355L-WHMHbwkHMmalVc4zgzltTGA/dev" 
+          <a href="https://script.google.com/macros/s/AKfycbwdn9bawk3GTHu355L-WHMHbwkHMmalVc4zgzltTGA/dev"
              target="_blank"
              class="bus-btn card-action">
             <i data-feather="truck" class="w-4 h-4"></i>
@@ -408,7 +419,7 @@
           </a>` : "";
 
         const bibButton = marathon.bibdetails ? `
-          <a href="https://script.google.com/macros/s/AKfycbwdn9bawk3GTHu355L-WHMHbwkHMmalVc4zgzltTGA/dev" 
+          <a href="https://script.google.com/macros/s/AKfycbwdn9bawk3GTHu355L-WHMHbwkHMmalVc4zgzltTGA/dev"
              target="_blank"
              class="bib-btn card-action">
             <i data-feather="user" class="w-4 h-4"></i>
@@ -449,17 +460,24 @@
       });
 
       // Update show more button
-      if (data.length > 6) {
+      if (data.length > 3) {
         showMoreContainer.classList.remove("hidden");
         const buttonText = showMoreButton.querySelector("span");
         const buttonIcon = showMoreButton.querySelector("i");
-        
+
         buttonText.textContent = showAll ? "Show Less" : "Show More";
+        if (showMoreButton) {
+        const buttonIcon = showMoreButton.querySelector("i");
+        if (buttonIcon) {
         buttonIcon.setAttribute("data-feather", showAll ? "chevron-up" : "chevron-down");
+        }
+        }
+
       } else {
         showMoreContainer.classList.add("hidden");
       }
-      
+
+      // Ensure Feather icons are rendered after DOM updates
       feather.replace();
     }
 
@@ -471,7 +489,7 @@
 
       filteredMarathons = marathons.filter((marathon) => {
         const isUpcoming = isFutureDate(marathon.date);
-        const matchesSearch = !searchText || 
+        const matchesSearch = !searchText ||
           marathon.name.toLowerCase().includes(searchText) ||
           marathon.city.toLowerCase().includes(searchText) ||
           marathon.description.toLowerCase().includes(searchText);
