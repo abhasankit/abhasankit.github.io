@@ -14,29 +14,30 @@
       background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
       min-height: 100vh;
     }
-    .center-logo {
+    .logo-top-left {
       display: flex;
-      justify-content: center;
-      align-items: center;
+      align-items: flex-start;
+      justify-content: flex-start;
       margin-top: 2.5rem;
       margin-bottom: 1.5rem;
+      margin-left: 1.2rem;
     }
-    .center-logo .logo-bg {
+    .logo-top-left .logo-bg {
       background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
       border-radius: 50%;
-      padding: 1.2rem;
+      padding: 1.44rem; /* 20% bigger than 1.2rem */
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow: 0 4px 24px 0 rgba(102,126,234,0.10);
-      width: 90px;
-      height: 90px;
+      width: 108px;   /* 20% bigger than 90px */
+      height: 108px;  /* 20% bigger than 90px */
     }
-    .center-logo img {
-      max-width: 60px;
-      max-height: 60px;
-      width: 60px;
-      height: 60px;
+    .logo-top-left img {
+      max-width: 72px;  /* 20% bigger than 60px */
+      max-height: 72px; /* 20% bigger than 60px */
+      width: 72px;
+      height: 72px;
       display: block;
       border-radius: 50%;
       background: transparent;
@@ -191,7 +192,7 @@
   </style>
 </head>
 <body class="min-h-screen">
-  <div class="center-logo">
+  <div class="logo-top-left">
     <div class="logo-bg">
       <img src="https://i.ibb.co/ZRLT8bH9/Whats-App-Image-2025-07-16-at-17-29-51.jpg" alt="Running Ninjas Logo">
     </div>
