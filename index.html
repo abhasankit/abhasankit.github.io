@@ -7,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/feather-icons"></script>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <style>
     html, body {
       font-family: 'Inter', system-ui, sans-serif;
@@ -198,6 +197,30 @@
   </div>
 
   <!-- Floating Buttons -->
+<!-- Toggle visibility by setting showAddRunnerButton = true or false -->
+<script>
+  const showAddRunnerButton = true; // Set false to hide the button
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    if (showAddRunnerButton) {
+      const btn = document.createElement("button");
+      btn.id = "addRunnerBtn";
+      btn.title = "Add Runner Details";
+      btn.innerHTML = '<i data-feather="user-plus" class="w-5 h-5 text-indigo-600"></i>';
+      document.querySelector(".floating-buttons").prepend(btn);
+      feather.replace();
+
+      document.getElementById("addRunnerBtn").addEventListener("click", () => {
+        window.location.href = "add-runner-form.html";
+      });
+    }
+  });
+</script>
+
+
+
   <div class="floating-buttons">
     <button id="toggleSearch" title="Search">
       <i data-feather="search" class="w-5 h-5 text-indigo-600"></i>
@@ -210,13 +233,13 @@
         <i data-feather="menu" class="w-5 h-5 text-indigo-600"></i>
       </button>
       <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-200 hidden z-50">
-        <a href="#blog" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-t-xl transition-colors">
-          <i data-feather="book-open" class="w-4 h-4 inline mr-2"></i>Blog
+        <a href="https://aashutosh.net/" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-t-xl transition-colors">
+          <i data-feather="book-open" class="w-4 h-4 inline mr-2"></i>Aashu's Blog
         </a>
-        <a href="#training" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-          <i data-feather="target" class="w-4 h-4 inline mr-2"></i>Training Plans
+        <a href="https://www.strava.com/training-plans/running" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+          <i data-feather="target" class="w-4 h-4 inline mr-2"></i>Sundar's Trng. plan
         </a>
-        <a href="#about" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-b-xl transition-colors">
+        <a href="https://aashutosh.net/?s=race+report" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-b-xl transition-colors">
           <i data-feather="award" class="w-4 h-4 inline mr-2"></i>Race Reports
         </a>
       </div>
@@ -304,216 +327,250 @@
   </footer>
 
   <script>
-  // Fetch marathons from Google Sheets
-  let marathons = [];
-  let filteredMarathons = [];
-  let showAll = false;
+    const marathons = [
+      {
+        name: "Stonehill Marathon 2025",
+        date: "2025-09-07",
+        city: "Bangalore",
+        description: "5k, 10k and Half Marathon",
+        registrationLink: "https://raadiantsports.com/registration/",
+        busAvailable: true,
+        bibdetails: true
+      },
+      {
+        name: "Wipro Bengaluru Marathon",
+        date: "2025-09-21",
+        city: "Bengaluru",
+        description: "Early bird ended",
+        registrationLink: "https://mysamay.in/public/event/info/22de74cf-e15d-4b56-8556-871a041ad251%3Fcmeta%3DLngs9BwHcs",
+        busAvailable: false,
+        bibdetails: false
+      },
+      {
+        name: "Malnad Ultra",
+        date: "2025-11-22",
+        city: "Bengaluru",
+        description: "30k, 50k and 100k",
+        registrationLink: "https://malnadultra.com",
+        busAvailable: false,
+        bibdetails: false
+      },
+      {
+        name: "Goa River Marathon",
+        date: "2025-12-14",
+        city: "Goa",
+        description: "Scenic route by the river",
+        registrationLink: "https://www.skfgoarivermarathon.com/",
+        busAvailable: false,
+        bibdetails: false
+      },
+      {
+        name: "Ladakh Marathon",
+        date: "2025-09-14",
+        city: "Leh",
+        description: "For Brave and Resilient",
+        registrationLink: "https://ladakhmarathon.com/",
+        busAvailable: false,
+        bibdetails: false
+      }
+    ];
 
-  // Utility functions
-  function formatDate(dateStr) {
-    const options = {
-      weekday: 'short',
-      year: "numeric",
-      month: "short",
-      day: "numeric"
-    };
-    return new Date(dateStr).toLocaleDateString(undefined, options);
-  }
+    // DOM elements
+    const marathonList = document.getElementById("marathonList");
+    const showMoreContainer = document.getElementById("showMoreContainer");
+    const showMoreButton = document.getElementById("showMoreButton");
+    const emptyState = document.getElementById("emptyState");
+    const searchInput = document.getElementById("searchInput");
+    const raceFilter = document.getElementById("raceFilter");
+    const fromDate = document.getElementById("fromDate");
+    const toDate = document.getElementById("toDate");
 
-  function isFutureDate(dateStr) {
-    return new Date(dateStr) >= new Date().setHours(0, 0, 0, 0);
-  }
+    let filteredMarathons = [];
+    let showAll = false;
 
-  function getTimeUntilEvent(dateStr) {
-    const now = new Date();
-    const eventDate = new Date(dateStr);
-    const diffTime = eventDate - now;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) return "Today";
-    if (diffDays === 1) return "Tomorrow";
-    if (diffDays <= 7) return `${diffDays} days`;
-    if (diffDays <= 30) return `${Math.ceil(diffDays / 7)} weeks`;
-    return `${Math.ceil(diffDays / 30)} months`;
-  }
-
-  function displayMarathons(data) {
-    marathonList.innerHTML = "";
-
-    if (data.length === 0) {
-      emptyState.classList.remove("hidden");
-      showMoreContainer.classList.add("hidden");
-      return;
+    // Utility functions
+    function formatDate(dateStr) {
+      const options = {
+        weekday: 'short',
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      };
+      return new Date(dateStr).toLocaleDateString(undefined, options);
     }
 
-    emptyState.classList.add("hidden");
-    // Show only 3 by default, all if showAll is true
-    const eventsToShow = showAll ? data : data.slice(0, 3);
+    function isFutureDate(dateStr) {
+      return new Date(dateStr) >= new Date().setHours(0, 0, 0, 0);
+    }
 
-    eventsToShow.forEach((marathon, index) => {
-      const card = document.createElement("div");
-      card.className = "marathon-card animate-fade-in";
-      card.style.animationDelay = `${index * 0.1}s`;
+    function getTimeUntilEvent(dateStr) {
+      const now = new Date();
+      const eventDate = new Date(dateStr);
+      const diffTime = eventDate - now;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-      const busButton = marathon.busAvailable ? `
-        <a href="https://script.google.com/macros/s/AKfycbwdn9bawk3GTHu355L-WHMHbwkHMmalVc4zgzltTGA/dev"
-           target="_blank"
-           class="bus-btn card-action">
-          <i data-feather="truck" class="w-4 h-4"></i>
-          <span>Bus Available</span>
-        </a>` : "";
+      if (diffDays === 0) return "Today";
+      if (diffDays === 1) return "Tomorrow";
+      if (diffDays <= 7) return `${diffDays} days`;
+      if (diffDays <= 30) return `${Math.ceil(diffDays / 7)} weeks`;
+      return `${Math.ceil(diffDays / 30)} months`;
+    }
 
-      const bibButton = marathon.bibdetails ? `
-        <a href="https://script.google.com/macros/s/AKfycbwdn9bawk3GTHu355L-WHMHbwkHMmalVc4zgzltTGA/dev"
-           target="_blank"
-           class="bib-btn card-action">
-          <i data-feather="user" class="w-4 h-4"></i>
-          <span>Bib Details</span>
-        </a>` : "";
+    function displayMarathons(data) {
+      marathonList.innerHTML = "";
 
-      card.innerHTML = `
-        <div class="accent-bar"></div>
-        <div class="card-inner">
-          <div class="flex items-center justify-between mb-1">
-            <h3>${marathon.name}</h3>
-            <a href="#" class="info-btn" title="Route Info">
-              <i data-feather="info" class="w-5 h-5"></i>
-            </a>
-          </div>
-          <div class="meta">
-            <i data-feather="calendar" class="w-4 h-4"></i>
-            <span>${formatDate(marathon.date)}</span>
-          </div>
-          <div class="meta mb-2">
-            <i data-feather="map-pin" class="w-4 h-4"></i>
-            <span>${marathon.city}</span>
-          </div>
-          <div class="desc">${marathon.description}</div>
-          <a href="${marathon.registrationLink}"
+      if (data.length === 0) {
+        emptyState.classList.remove("hidden");
+        showMoreContainer.classList.add("hidden");
+        return;
+      }
+
+      emptyState.classList.add("hidden");
+      // Show only 3 by default, all if showAll is true
+      const eventsToShow = showAll ? data : data.slice(0, 3);
+
+      eventsToShow.forEach((marathon, index) => {
+        const card = document.createElement("div");
+        card.className = "marathon-card animate-fade-in";
+        card.style.animationDelay = `${index * 0.1}s`;
+
+        const busButton = marathon.busAvailable ? `
+          <a href="https://script.google.com/macros/s/AKfycbwdn9bawk3GTHu355L-WHMHbwkHMmalVc4zgzltTGA/dev"
              target="_blank"
-             class="btn-primary block text-center">
-            Register Now
-          </a>
-          <div class="card-actions flex flex-col gap-2 mt-1">
-            ${busButton}
-            ${bibButton}
+             class="bus-btn card-action">
+            <i data-feather="truck" class="w-4 h-4"></i>
+            <span>Bus Available</span>
+          </a>` : "";
+
+        const bibButton = marathon.bibdetails ? `
+          <a href="https://script.google.com/macros/s/AKfycbwdn9bawk3GTHu355L-WHMHbwkHMmalVc4zgzltTGA/dev"
+             target="_blank"
+             class="bib-btn card-action">
+            <i data-feather="user" class="w-4 h-4"></i>
+            <span>Bib Details</span>
+          </a>` : "";
+
+        card.innerHTML = `
+          <div class="accent-bar"></div>
+          <div class="card-inner">
+            <div class="flex items-center justify-between mb-1">
+              <h3>${marathon.name}</h3>
+              <a href="#" class="info-btn" title="Route Info">
+                <i data-feather="info" class="w-5 h-5"></i>
+              </a>
+            </div>
+            <div class="meta">
+              <i data-feather="calendar" class="w-4 h-4"></i>
+              <span>${formatDate(marathon.date)}</span>
+            </div>
+            <div class="meta mb-2">
+              <i data-feather="map-pin" class="w-4 h-4"></i>
+              <span>${marathon.city}</span>
+            </div>
+            <div class="desc">${marathon.description}</div>
+            <a href="${marathon.registrationLink}"
+               target="_blank"
+               class="btn-primary block text-center">
+              Register Now
+            </a>
+            <div class="card-actions flex flex-col gap-2 mt-1">
+              ${busButton}
+              ${bibButton}
+            </div>
           </div>
-        </div>
-      `;
+        `;
 
-      marathonList.appendChild(card);
-    });
+        marathonList.appendChild(card);
+      });
 
-    // Update show more button
-    if (data.length > 3) {
-      showMoreContainer.classList.remove("hidden");
-      const buttonText = showMoreButton.querySelector("span");
-      const buttonIcon = showMoreButton.querySelector("i");
+      // Update show more button
+      if (data.length > 3) {
+        showMoreContainer.classList.remove("hidden");
+        const buttonText = showMoreButton.querySelector("span");
+        const buttonIcon = showMoreButton.querySelector("i");
 
-      buttonText.textContent = showAll ? "Show Less" : "Show More";
-      if (showMoreButton) {
-      const buttonIcon = showMoreButton.querySelector("i");
-      if (buttonIcon) {
-      buttonIcon.setAttribute("data-feather", showAll ? "chevron-up" : "chevron-down");
+        buttonText.textContent = showAll ? "Show Less" : "Show More";
+        if (showMoreButton) {
+        const buttonIcon = showMoreButton.querySelector("i");
+        if (buttonIcon) {
+        buttonIcon.setAttribute("data-feather", showAll ? "chevron-up" : "chevron-down");
+        }
+        }
+
+      } else {
+        showMoreContainer.classList.add("hidden");
       }
-      }
 
-    } else {
-      showMoreContainer.classList.add("hidden");
+      // Ensure Feather icons are rendered after DOM updates
+      feather.replace();
     }
 
-    // Ensure Feather icons are rendered after DOM updates
+    function filterAndDisplay() {
+      const searchText = searchInput?.value.toLowerCase() || "";
+      const selectedRace = raceFilter?.value.toLowerCase() || "";
+      const from = fromDate?.value;
+      const to = toDate?.value;
+
+      filteredMarathons = marathons.filter((marathon) => {
+        const isUpcoming = isFutureDate(marathon.date);
+        const matchesSearch = !searchText ||
+          marathon.name.toLowerCase().includes(searchText) ||
+          marathon.city.toLowerCase().includes(searchText) ||
+          marathon.description.toLowerCase().includes(searchText);
+        const matchesRace = !selectedRace || marathon.name.toLowerCase().includes(selectedRace);
+        const matchesFromDate = !from || new Date(marathon.date) >= new Date(from);
+        const matchesToDate = !to || new Date(marathon.date) <= new Date(to);
+
+        return isUpcoming && matchesSearch && matchesRace && matchesFromDate && matchesToDate;
+      });
+
+      // Sort by soonest event first
+      filteredMarathons.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      showAll = false;
+      displayMarathons(filteredMarathons);
+    }
+
+    // Event listeners
+    showMoreButton.addEventListener("click", () => {
+      showAll = !showAll;
+      displayMarathons(filteredMarathons);
+    });
+
+    document.getElementById("toggleSearch").addEventListener("click", () => {
+      const searchBox = document.getElementById("searchBox");
+      searchBox.classList.toggle("hidden");
+      if (!searchBox.classList.contains("hidden")) {
+        searchInput.focus();
+      }
+    });
+
+    document.getElementById("toggleFilters").addEventListener("click", () => {
+      document.getElementById("filterPanel").classList.toggle("hidden");
+    });
+
+    document.getElementById("toggleMenu").addEventListener("click", () => {
+      document.getElementById("dropdownMenu").classList.toggle("hidden");
+    });
+
+    // Close menu when clicking outside
+    window.addEventListener("click", (e) => {
+      const menu = document.getElementById("dropdownMenu");
+      const button = document.getElementById("toggleMenu");
+      if (!button.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.add("hidden");
+      }
+    });
+
+    // Search and filter event listeners
+    searchInput?.addEventListener("input", filterAndDisplay);
+    raceFilter?.addEventListener("change", filterAndDisplay);
+    fromDate?.addEventListener("change", filterAndDisplay);
+    toDate?.addEventListener("change", filterAndDisplay);
+
+    // Initialize
     feather.replace();
-  }
-
-  async function fetchMarathonsFromSheet() {
-    const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT7qHtB_ai5bQtEofVxuvrFwJtYlXpngwxhrKjzmX4uSlFxSJoaW4365j8sYJqYjiqes1EKz43yG-Xg/pub?gid=0&single=true&output=csv";
-    try {
-      const res = await fetch(SHEET_URL);
-      const text = await res.text();
-      // Use PapaParse to handle commas and quoted fields
-      const parsed = Papa.parse(text, { header: true, skipEmptyLines: true });
-      marathons = parsed.data.map(row => ({
-        name: row["Name"] || "",
-        date: row["Date"] || "",
-        city: row["City"] || "",
-        description: row["Description"] || "",
-        registrationLink: row["Registration Link"] || "",
-        busAvailable: (row["Bus Available"] || "").toUpperCase().trim() === "TRUE",
-        bibdetails: (row["Bib Details"] || "").toUpperCase().trim() === "TRUE"
-      }));
-      filterAndDisplay();
-    } catch (e) {
-      console.error("Failed to fetch marathons from Google Sheet", e);
-    }
-  }
-
-  function filterAndDisplay() {
-    const searchText = searchInput?.value.toLowerCase() || "";
-    const selectedRace = raceFilter?.value.toLowerCase() || "";
-    const from = fromDate?.value;
-    const to = toDate?.value;
-
-    filteredMarathons = marathons.filter((marathon) => {
-      const isUpcoming = isFutureDate(marathon.date);
-      const matchesSearch = !searchText ||
-        marathon.name.toLowerCase().includes(searchText) ||
-        marathon.city.toLowerCase().includes(searchText) ||
-        marathon.description.toLowerCase().includes(searchText);
-      const matchesRace = !selectedRace || marathon.name.toLowerCase().includes(selectedRace);
-      const matchesFromDate = !from || new Date(marathon.date) >= new Date(from);
-      const matchesToDate = !to || new Date(marathon.date) <= new Date(to);
-
-      return isUpcoming && matchesSearch && matchesRace && matchesFromDate && matchesToDate;
-    });
-
-    // Sort by soonest event first
-    filteredMarathons.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    showAll = false;
-    displayMarathons(filteredMarathons);
-  }
-
-  // Event listeners
-  showMoreButton.addEventListener("click", () => {
-    showAll = !showAll;
-    displayMarathons(filteredMarathons);
-  });
-
-  document.getElementById("toggleSearch").addEventListener("click", () => {
-    const searchBox = document.getElementById("searchBox");
-    searchBox.classList.toggle("hidden");
-    if (!searchBox.classList.contains("hidden")) {
-      searchInput.focus();
-    }
-  });
-
-  document.getElementById("toggleFilters").addEventListener("click", () => {
-    document.getElementById("filterPanel").classList.toggle("hidden");
-  });
-
-  document.getElementById("toggleMenu").addEventListener("click", () => {
-    document.getElementById("dropdownMenu").classList.toggle("hidden");
-  });
-
-  // Close menu when clicking outside
-  window.addEventListener("click", (e) => {
-    const menu = document.getElementById("dropdownMenu");
-    const button = document.getElementById("toggleMenu");
-    if (!button.contains(e.target) && !menu.contains(e.target)) {
-      menu.classList.add("hidden");
-    }
-  });
-
-  // Search and filter event listeners
-  searchInput?.addEventListener("input", filterAndDisplay);
-  raceFilter?.addEventListener("change", filterAndDisplay);
-  fromDate?.addEventListener("change", filterAndDisplay);
-  toDate?.addEventListener("change", filterAndDisplay);
-
-  // Initialize
-  feather.replace();
-  fetchMarathonsFromSheet();
+    filterAndDisplay();
   </script>
 </body>
 </html>
