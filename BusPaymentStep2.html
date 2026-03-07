@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bus Payment - Running Ninjas</title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9WH7YSXZ94"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9WH7YSXZ94');
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 py-10">
+  <div class="w-full flex justify-center mb-6">
+    <img src="https://i.ibb.co/ZRLT8bH9/Whats-App-Image-2025-07-16-at-17-29-51.jpg" alt="Running Ninjas Logo" class="w-16 h-16 rounded-full" />
+  </div>
+
+  <div class="max-w-md mx-auto bg-white rounded-xl shadow p-6">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Bus Payment</h2>
+
+    <form id="busPaymentForm">
+      <label class="block mb-3">Select Marathon
+        <select id="marathonName" required class="w-full mt-1 p-2 border rounded">
+          <option value="">Loading events...</option>
+        </select>
+      </label>
+
+      <label class="block mb-2">Enter Unique ID
+        <input id="uniqueId" type="text" required class="w-full mt-1 p-2 border rounded" />
+      </label>
+
+      <button type="button" onclick="fetchBusDetails()" class="w-full bg-indigo-600 text-white font-semibold py-2 rounded mb-4">
+        Fetch Bus Payment Details
+      </button>
+
+      <div id="busDetails" class="hidden space-y-3">
+        <div><label class="block mb-1">Name</label><input id="name" type="text" readonly class="w-full mt-1 p-2 border rounded bg-gray-100" /></div>
+        <div><label class="block mb-1">Flat Number</label><input id="flat" type="text" readonly class="w-full mt-1 p-2 border rounded bg-gray-100" /></div>
+        <div><label class="block mb-1">Race Category</label><input id="raceCategory" type="text" readonly class="w-full mt-1 p-2 border rounded bg-gray-100" /></div>
+        <div><label class="block mb-1">Bus Seats Required</label><input id="busSeats" type="text" readonly class="w-full mt-1 p-2 border rounded bg-gray-100" /></div>
+        <div><label class="block mb-1">Per Seat Cost</label><input id="seatCost" type="text" readonly class="w-full mt-1 p-2 border rounded bg-gray-100" /></div>
+        <div><label class="block mb-1">UPI ID for Payment</label><input id="upiId" type="text" readonly class="w-full mt-1 p-2 border rounded bg-gray-100" /></div>
+        <div><label class="block mb-1">Event Comments</label><textarea id="eventComments" readonly rows="2" class="w-full mt-1 p-2 border rounded bg-gray-100"></textarea></div>
+
+        <div><label class="block mb-1">Amount Paid</label><input id="amountPaid" type="number" min="0" class="w-full mt-1 p-2 border rounded" required /></div>
+        <div><label class="block mb-1">Transaction ID</label><input id="transactionId" type="text" class="w-full mt-1 p-2 border rounded" required /></div>
+        <div><label class="block mb-1">Comments</label><textarea id="userComments" rows="2" class="w-full mt-1 p-2 border rounded"></textarea></div>
+
+        <button id="submitBtn" type="submit" class="w-full bg-green-600 text-white font-semibold py-2 rounded mt-2">Submit Payment Details</button>
+      </div>
+    </form>
+
+    <p id="formMessage" class="text-green-600 mt-4 hidden"></p>
+    <p id="errorMessage" class="text-red-600 mt-4 hidden"></p>
+    <a href="index.html" class="block mt-4 text-indigo-600 text-sm">&lt; Back</a>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script>
+    const { createClient } = window.supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    window.onload = async function() {
+      const { data, error } = await db
+        .from('events')
+        .select('event_name')
+        .eq('bus_payment', true)
+        .order('event_date', { ascending: true });
+
+      const dropdown = document.getElementById('marathonName');
+      dropdown.innerHTML = '';
+
+      if (error || !data || data.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = ''; opt.textContent = 'No bus payment events available';
+        dropdown.appendChild(opt);
+        return;
+      }
+
+      data.forEach(e => {
+        const opt = document.createElement('option');
+        opt.value = e.event_name; opt.textContent = e.event_name;
+        dropdown.appendChild(opt);
+      });
+    };
+
+    async function fetchBusDetails() {
+      const uniqueId    = document.getElementById('uniqueId').value.trim();
+      const marathonName = document.getElementById('marathonName').value;
+      if (!uniqueId || !marathonName) return alert('Please fill both fields.');
+
+      const errMsg = document.getElementById('errorMessage');
+      errMsg.classList.add('hidden');
+
+      // Get bus booking for this runner + event
+      const { data: booking } = await db
+        .from('bus_bookings')
+        .select('name, flat, race_category, bus_seats')
+        .eq('unique_id', uniqueId)
+        .eq('event_name', marathonName)
+        .single();
+
+      if (!booking) {
+        document.getElementById('busDetails').classList.add('hidden');
+        errMsg.textContent = 'This User has not opted for the bus for this event.';
+        errMsg.classList.remove('hidden');
+        return;
+      }
+
+      // Get event details
+      const { data: event } = await db
+        .from('events')
+        .select('seat_cost, upi_id, instructions')
+        .eq('event_name', marathonName)
+        .single();
+
+      document.getElementById('name').value         = booking.name;
+      document.getElementById('flat').value         = booking.flat;
+      document.getElementById('raceCategory').value = booking.race_category;
+      document.getElementById('busSeats').value     = booking.bus_seats;
+      document.getElementById('seatCost').value     = event?.seat_cost ? '₹' + event.seat_cost : '—';
+      document.getElementById('upiId').value        = event?.upi_id || '—';
+      document.getElementById('eventComments').value = event?.instructions || '';
+
+      document.getElementById('busDetails').classList.remove('hidden');
+      document.getElementById('formMessage').classList.add('hidden');
+    }
+
+    document.getElementById('busPaymentForm').addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const { error } = await db.from('bus_payments').insert([{
+        unique_id:      document.getElementById('uniqueId').value.trim(),
+        event_name:     document.getElementById('marathonName').value,
+        amount_paid:    parseFloat(document.getElementById('amountPaid').value),
+        transaction_id: document.getElementById('transactionId').value.trim(),
+        comments:       document.getElementById('userComments').value,
+      }]);
+
+      if (error) { alert('Error: ' + error.message); return; }
+
+      const msg = document.getElementById('formMessage');
+      msg.textContent = 'Payment details saved successfully!';
+      msg.classList.remove('hidden');
+      document.getElementById('submitBtn').classList.add('hidden');
+      ['uniqueId', 'marathonName', 'amountPaid', 'transactionId', 'userComments'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.setAttribute('disabled', 'true'); el.classList.add('bg-gray-100'); }
+      });
+    });
+  </script>
+</body>
+</html>

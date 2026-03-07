@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Race Feedback - Running Ninjas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    ::placeholder { color: #9ca3af; font-size: 0.85rem; }
+  </style>
+</head>
+<body class="bg-gray-50 py-10">
+  <div class="w-full flex justify-center mb-6">
+    <img src="https://i.ibb.co/ZRLT8bH9/Whats-App-Image-2025-07-16-at-17-29-51.jpg" alt="Running Ninjas Logo" class="w-16 h-16 rounded-full" />
+  </div>
+
+  <div class="max-w-md mx-auto bg-white rounded-xl shadow p-6">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Timing &amp; Feedback</h2>
+
+    <form id="feedbackForm">
+      <label class="block mb-3">Select Marathon
+        <select id="marathonName" name="marathonName" required class="w-full mt-1 p-2 border rounded">
+          <option value="">Loading events...</option>
+        </select>
+      </label>
+
+      <label class="block mb-2">Enter Unique ID
+        <input id="uniqueId" name="uniqueId" type="text" required class="w-full mt-1 p-2 border rounded" />
+      </label>
+
+      <button type="button" onclick="fetchRunnerDetails()" class="w-full bg-indigo-600 text-white font-semibold py-2 rounded mb-4">
+        Enter Timing &amp; Give Feedback
+      </button>
+
+      <div id="runnerSection" class="hidden space-y-3">
+        <div>
+          <label class="block mb-1">Name</label>
+          <input id="name" name="name" type="text" readonly class="w-full mt-1 p-2 border rounded bg-gray-100" />
+        </div>
+
+        <div>
+          <label class="block mb-1">Race Category</label>
+          <select id="raceCategory" name="raceCategory" required class="w-full mt-1 p-2 border rounded">
+            <option value="">-- Select Category --</option>
+            <option>5K</option><option>10K</option>
+            <option>Half Marathon</option><option>Full Marathon</option>
+            <option>30K</option><option>32K</option>
+            <option>50K</option><option>100K</option>
+          </select>
+        </div>
+
+        <label class="block font-semibold text-gray-700">Enter your race timing</label>
+        <div class="flex gap-2 items-center">
+          <input type="number" id="hours" min="0" max="23" placeholder="HH" class="w-16 p-2 border rounded">
+          :
+          <input type="number" id="minutes" min="0" max="59" placeholder="MM" class="w-16 p-2 border rounded">
+          :
+          <input type="number" id="seconds" min="0" max="59" placeholder="SS" class="w-16 p-2 border rounded">
+        </div>
+
+        <!-- Pre-Race -->
+        <div class="mt-6">
+          <h3 class="text-lg font-bold text-indigo-700 border-b pb-1">Pre-Race Feedback</h3>
+          <label class="block mt-2">Registration Process</label>
+          <div class="flex items-center gap-3 mt-1 flex-wrap text-gray-700">
+            <label><input type="radio" name="registrationProcess" value="1" required> 1</label>
+            <label><input type="radio" name="registrationProcess" value="2"> 2</label>
+            <label><input type="radio" name="registrationProcess" value="3"> 3</label>
+            <label><input type="radio" name="registrationProcess" value="4"> 4</label>
+            <label><input type="radio" name="registrationProcess" value="5"> 5</label>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">1 = Very Complicated, 5 = Very Easy</p>
+
+          <label class="block mt-3">Bib Distribution Organisation</label>
+          <div class="flex items-center gap-3 mt-1 flex-wrap text-gray-700">
+            <label><input type="radio" name="bibDistribution" value="1" required> 1</label>
+            <label><input type="radio" name="bibDistribution" value="2"> 2</label>
+            <label><input type="radio" name="bibDistribution" value="3"> 3</label>
+            <label><input type="radio" name="bibDistribution" value="4"> 4</label>
+            <label><input type="radio" name="bibDistribution" value="5"> 5</label>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">1 = Very Complicated, 5 = Very Easy</p>
+        </div>
+
+        <!-- Race -->
+        <div class="mt-6">
+          <h3 class="text-lg font-bold text-indigo-700 border-b pb-1">Race Feedback</h3>
+          <label class="block mt-2">Holding Area Organisation</label>
+          <div class="flex items-center gap-3 mt-1 flex-wrap text-gray-700">
+            <label><input type="radio" name="holdingArea" value="1" required> 1</label>
+            <label><input type="radio" name="holdingArea" value="2"> 2</label>
+            <label><input type="radio" name="holdingArea" value="3"> 3</label>
+            <label><input type="radio" name="holdingArea" value="4"> 4</label>
+            <label><input type="radio" name="holdingArea" value="5"> 5</label>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">1 = Poorly managed, 5 = Very well managed</p>
+
+          <label class="block mt-3">Route Difficulty</label>
+          <div class="flex items-center gap-3 mt-1 flex-wrap text-gray-700">
+            <label><input type="radio" name="routeDifficulty" value="1" required> 1</label>
+            <label><input type="radio" name="routeDifficulty" value="2"> 2</label>
+            <label><input type="radio" name="routeDifficulty" value="3"> 3</label>
+            <label><input type="radio" name="routeDifficulty" value="4"> 4</label>
+            <label><input type="radio" name="routeDifficulty" value="5"> 5</label>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">1 = Extremely difficult, 5 = Very Easy</p>
+
+          <label class="block mt-3">Route Support</label>
+          <div class="flex items-center gap-3 mt-1 flex-wrap text-gray-700">
+            <label><input type="radio" name="routeSupport" value="1" required> 1</label>
+            <label><input type="radio" name="routeSupport" value="2"> 2</label>
+            <label><input type="radio" name="routeSupport" value="3"> 3</label>
+            <label><input type="radio" name="routeSupport" value="4"> 4</label>
+            <label><input type="radio" name="routeSupport" value="5"> 5</label>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">1 = Poorly managed, 5 = Extremely well managed</p>
+
+          <label class="block mt-3">T-shirt Quality</label>
+          <div class="flex items-center gap-3 mt-1 flex-wrap text-gray-700">
+            <label><input type="radio" name="tshirtQuality" value="1" required> 1</label>
+            <label><input type="radio" name="tshirtQuality" value="2"> 2</label>
+            <label><input type="radio" name="tshirtQuality" value="3"> 3</label>
+            <label><input type="radio" name="tshirtQuality" value="4"> 4</label>
+            <label><input type="radio" name="tshirtQuality" value="5"> 5</label>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">1 = Poor Quality, 5 = Excellent Quality</p>
+        </div>
+
+        <!-- Post-Race -->
+        <div class="mt-6">
+          <h3 class="text-lg font-bold text-indigo-700 border-b pb-1">Post-Race Feedback</h3>
+          <label class="block mt-2">Breakfast Quality</label>
+          <div class="flex items-center gap-3 mt-1 flex-wrap text-gray-700">
+            <label><input type="radio" name="breakfastQuality" value="1" required> 1</label>
+            <label><input type="radio" name="breakfastQuality" value="2"> 2</label>
+            <label><input type="radio" name="breakfastQuality" value="3"> 3</label>
+            <label><input type="radio" name="breakfastQuality" value="4"> 4</label>
+            <label><input type="radio" name="breakfastQuality" value="5"> 5</label>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">1 = Poor Quality, 5 = Excellent Quality</p>
+
+          <label class="block mt-3">Medal Quality</label>
+          <div class="flex items-center gap-3 mt-1 flex-wrap text-gray-700">
+            <label><input type="radio" name="medalQuality" value="1" required> 1</label>
+            <label><input type="radio" name="medalQuality" value="2"> 2</label>
+            <label><input type="radio" name="medalQuality" value="3"> 3</label>
+            <label><input type="radio" name="medalQuality" value="4"> 4</label>
+            <label><input type="radio" name="medalQuality" value="5"> 5</label>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">1 = Poor Quality, 5 = Excellent Quality</p>
+        </div>
+
+        <!-- Overall -->
+        <div class="mt-6">
+          <h3 class="text-lg font-bold text-indigo-700 border-b pb-1">Overall</h3>
+          <label class="block mt-2">How likely to recommend this race to others?</label>
+          <div class="flex items-center gap-3 mt-1 flex-wrap text-gray-700">
+            <label><input type="radio" name="recommend" value="1" required> 1</label>
+            <label><input type="radio" name="recommend" value="2"> 2</label>
+            <label><input type="radio" name="recommend" value="3"> 3</label>
+            <label><input type="radio" name="recommend" value="4"> 4</label>
+            <label><input type="radio" name="recommend" value="5"> 5</label>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">1 = Not recommended, 5 = Highly recommended</p>
+        </div>
+
+        <button id="submitBtn" type="submit" class="w-full bg-green-600 text-white font-semibold py-2 rounded mt-4">
+          Submit Timing &amp; Feedback
+        </button>
+      </div>
+    </form>
+
+    <p id="formMessage" class="text-green-600 mt-4 hidden"></p>
+    <p id="errorMessage" class="text-red-600 mt-4 hidden"></p>
+    <a href="index.html" class="block mt-4 text-indigo-600 text-sm">&lt; Back</a>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script>
+    const { createClient } = window.supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    window.onload = async function() {
+      const { data, error } = await db
+        .from('events')
+        .select('event_name')
+        .eq('feedback', true)
+        .order('event_date', { ascending: true });
+
+      const dropdown = document.getElementById('marathonName');
+      dropdown.innerHTML = '';
+
+      if (error || !data || data.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = ''; opt.textContent = 'No feedback events available';
+        dropdown.appendChild(opt);
+        return;
+      }
+
+      data.forEach(e => {
+        const opt = document.createElement('option');
+        opt.value = e.event_name; opt.textContent = e.event_name;
+        dropdown.appendChild(opt);
+      });
+    };
+
+    async function fetchRunnerDetails() {
+      const uniqueId = document.getElementById('uniqueId').value.trim();
+      const marathonName = document.getElementById('marathonName').value;
+      if (!uniqueId || !marathonName) return alert('Please fill both fields.');
+
+      const { data: runner, error } = await db
+        .from('runners')
+        .select('first_name, last_name')
+        .eq('unique_id', uniqueId)
+        .single();
+
+      const errMsg = document.getElementById('errorMessage');
+
+      if (error || !runner) {
+        document.getElementById('runnerSection').classList.add('hidden');
+        errMsg.textContent = 'Runner not found. Please check your Unique ID.';
+        errMsg.classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('name').value = runner.first_name + ' ' + (runner.last_name || '');
+      document.getElementById('runnerSection').classList.remove('hidden');
+      errMsg.classList.add('hidden');
+    }
+
+    document.getElementById('feedbackForm').addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const h = document.getElementById('hours').value || '0';
+      const m = document.getElementById('minutes').value || '0';
+      const s = document.getElementById('seconds').value || '0';
+      const duration = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+
+      const fd = new FormData(e.target);
+      const { error } = await db.from('race_feedback').insert([{
+        unique_id:             document.getElementById('uniqueId').value.trim(),
+        event_name:            fd.get('marathonName'),
+        name:                  fd.get('name'),
+        race_category:         fd.get('raceCategory'),
+        duration:              duration,
+        registration_process:  parseInt(fd.get('registrationProcess')),
+        bib_distribution:      parseInt(fd.get('bibDistribution')),
+        holding_area:          parseInt(fd.get('holdingArea')),
+        route_difficulty:      parseInt(fd.get('routeDifficulty')),
+        route_support:         parseInt(fd.get('routeSupport')),
+        tshirt_quality:        parseInt(fd.get('tshirtQuality')),
+        breakfast_quality:     parseInt(fd.get('breakfastQuality')),
+        medal_quality:         parseInt(fd.get('medalQuality')),
+        recommend:             parseInt(fd.get('recommend')),
+      }]);
+
+      if (error) { alert('Submission failed: ' + error.message); return; }
+
+      document.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
+      const msg = document.getElementById('formMessage');
+      msg.textContent = 'Feedback submitted successfully!';
+      msg.classList.remove('hidden');
+      document.getElementById('submitBtn').classList.add('hidden');
+    });
+  </script>
+</body>
+</html>

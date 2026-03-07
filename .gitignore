@@ -1,0 +1,7 @@
+# SQL files contain schema + seed data with runner PII — keep off repo
+supabase/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.vscode/

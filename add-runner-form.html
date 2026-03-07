@@ -1,10 +1,16 @@
-<!-- add-runner-form.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Add Runner Details</title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9WH7YSXZ94"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9WH7YSXZ94');
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 py-10">
@@ -13,28 +19,47 @@
   </div>
   <div class="max-w-md mx-auto bg-white rounded-xl shadow p-6">
     <h2 class="text-xl font-semibold text-gray-800 mb-4">Add Runner Details</h2>
+
     <form id="runnerForm">
-      <label class="block mb-2">Unique ID (min 6 chars)
-        <input name="uniqueId" type="text" required minlength="6" class="w-full mt-1 p-2 border rounded" />
+      <label class="block mb-2">Unique ID
+        <input name="uniqueId" type="text" readonly class="w-full mt-1 p-2 border rounded bg-gray-100 cursor-not-allowed" />
+        <span class="text-xs text-gray-500">Auto-generated from first name (first 4 letters) + flat number</span>
       </label>
-      <label class="block mb-2">First Name
+
+      <label class="block mb-2">First Name *
         <input name="firstName" type="text" required class="w-full mt-1 p-2 border rounded" />
+        <span class="text-red-500 text-xs hidden" id="firstNameError">Please enter a valid first name (letters only)</span>
       </label>
+
       <label class="block mb-2">Last Name
-        <input name="lastName" type="text" required class="w-full mt-1 p-2 border rounded" />
+        <input name="lastName" type="text" class="w-full mt-1 p-2 border rounded" />
+        <span class="text-red-500 text-xs hidden" id="lastNameError">Please enter a valid last name (letters only)</span>
       </label>
-      <label class="block mb-2">Flat Number
-        <input name="flat" type="text" required class="w-full mt-1 p-2 border rounded" />
+
+      <label class="block mb-2">Flat Number *
+        <input name="flat" type="number" required min="1001" max="23188" class="w-full mt-1 p-2 border rounded" />
+        <span class="text-xs text-gray-500">Enter your PSN flat number</span>
+        <span class="text-red-500 text-xs hidden" id="flatError">Flat number must be between 1001 and 23188</span>
       </label>
-      <label class="block mb-2">Community
-        <input name="community" type="text" required class="w-full mt-1 p-2 border rounded" />
+
+      <label class="block mb-2">Community Code *
+        <input name="community" type="password" required class="w-full mt-1 p-2 border rounded" />
+        <span class="text-xs text-gray-500">Contact your running group admin for the code</span>
       </label>
-      <label class="block mb-2">Phone Number (optional)
+
+      <label class="block mb-2">Phone Number
         <input name="phone" type="tel" class="w-full mt-1 p-2 border rounded" />
+        <span class="text-red-500 text-xs hidden" id="phoneError">Please enter a valid 10-digit phone number</span>
       </label>
-      <label class="block mb-2">Age (optional)
-        <input name="age" type="number" min="0" class="w-full mt-1 p-2 border rounded" />
+
+      <label class="block mb-2">Date Of Birth
+        <input name="dob" type="date" class="w-full mt-1 p-2 border rounded" />
       </label>
+
+      <label class="block mb-2">Age
+        <input name="age" type="number" disabled class="w-full mt-1 p-2 border rounded bg-gray-100 cursor-not-allowed" />
+      </label>
+
       <label class="block mb-4">Gender
         <select name="gender" class="w-full mt-1 p-2 border rounded">
           <option value="">Select...</option>
@@ -43,39 +68,185 @@
           <option value="Do not wish to disclose">Do not wish to disclose</option>
         </select>
       </label>
+
+      <label class="block mb-4">Tshirt Size
+        <select name="teesize" class="w-full mt-1 p-2 border rounded">
+          <option value="">Select...</option>
+          <option value="kids-xs">Kids XS</option>
+          <option value="kids-s">Kids S</option>
+          <option value="kids-m">Kids M</option>
+          <option value="kids-l">Kids L</option>
+          <option value="kids-xl">Kids XL</option>
+          <option value="xxs">XXS</option>
+          <option value="xs">XS</option>
+          <option value="s">S</option>
+          <option value="m">M</option>
+          <option value="l">L</option>
+          <option value="xl">XL</option>
+          <option value="xxl">XXL</option>
+        </select>
+      </label>
+
+      <label class="block mb-2">Email Address *
+        <input name="email" type="email" required class="w-full mt-1 p-2 border rounded" />
+        <span class="text-red-500 text-xs hidden" id="emailError">Please enter a valid email address</span>
+      </label>
+
+      <label class="block mb-2">Blood Group
+        <select name="bloodgroup" class="w-full mt-1 p-2 border rounded">
+          <option value="">Select Blood Group...</option>
+          <option value="A+">A+</option><option value="A-">A-</option>
+          <option value="B+">B+</option><option value="B-">B-</option>
+          <option value="AB+">AB+</option><option value="AB-">AB-</option>
+          <option value="O+">O+</option><option value="O-">O-</option>
+        </select>
+      </label>
+
+      <label class="block mb-2">Emergency Contact Name
+        <input name="emergencyname" type="text" class="w-full mt-1 p-2 border rounded" />
+        <span class="text-red-500 text-xs hidden" id="emergencyNameError">Please enter a valid contact name (letters only)</span>
+      </label>
+
+      <label class="block mb-2">Emergency Contact Number
+        <input name="emergencynumber" type="tel" class="w-full mt-1 p-2 border rounded" />
+        <span class="text-red-500 text-xs hidden" id="emergencyNumberError">Please enter a valid 10-digit phone number</span>
+      </label>
+
       <button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-2 rounded">Submit</button>
     </form>
     <p id="formMessage" class="text-green-600 mt-4 hidden">Details submitted successfully!</p>
   </div>
-<script>
-  const scriptURL = 'https://script.google.com/macros/s/AKfycby3DBvcj_yjIlB_FMBwkoUFKdkqjIjm7fcKkFURJ30Mm9-Mh8Cf0N7M0WVCHGS8XhM24w/exec';
-  const form = document.getElementById('runnerForm');
-  const msg = document.getElementById('formMessage');
 
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const formData = new FormData(form);
-    const community = formData.get("community").trim().toUpperCase();
+  <script src="js/config.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script>
+    const { createClient } = window.supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    if (community !== 'PSN') {
-      alert("Sorry, your community is not registered !");
-      return;
+    const COMMUNITY_CODE = 'PSNinja';
+
+    var namePattern = /^[A-Za-z\s]+$/;
+    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    var phonePattern = /^\d{10}$/;
+
+    function showError(id, show) {
+      var el = document.getElementById(id);
+      if (el) el.classList[show ? 'remove' : 'add']('hidden');
     }
 
-   fetch(scriptURL, { method: 'POST', body: formData })
-      .then(response => response.text())
-      .then(responseText => {
-        if (responseText.includes("Success")) {
-          msg.classList.remove("hidden");
-          form.reset();
-        } else {
-          alert("Error: " + responseText);
-        }
-      })
-      .catch((error) => alert('Error: ' + error.message));
-  });
-</script>
+    function generateUniqueId() {
+      var fn = document.querySelector('[name="firstName"]').value.trim();
+      var flat = document.querySelector('[name="flat"]').value.trim();
+      var uid = document.querySelector('[name="uniqueId"]');
+      if (fn && flat) {
+        var prefix = fn.length >= 4 ? fn.substring(0, 4) : (fn + 'XXXX').substring(0, 4);
+        uid.value = prefix.toUpperCase() + flat;
+      } else { uid.value = ''; }
+    }
 
+    function calculateAge() {
+      var dob = document.querySelector('[name="dob"]').value;
+      var ageEl = document.querySelector('[name="age"]');
+      if (dob) {
+        var d = new Date(dob), today = new Date();
+        var age = today.getFullYear() - d.getFullYear();
+        if (today.getMonth() < d.getMonth() || (today.getMonth() === d.getMonth() && today.getDate() < d.getDate())) age--;
+        ageEl.value = age >= 0 ? age : '';
+      } else { ageEl.value = ''; }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var form = document.getElementById('runnerForm');
+      var dobInput = form.querySelector('[name="dob"]');
+      var firstNameInput = form.querySelector('[name="firstName"]');
+      var lastNameInput = form.querySelector('[name="lastName"]');
+      var flatInput = form.querySelector('[name="flat"]');
+      var emailInput = form.querySelector('[name="email"]');
+      var phoneInput = form.querySelector('[name="phone"]');
+      var emergencyNameInput = form.querySelector('[name="emergencyname"]');
+      var emergencyNumberInput = form.querySelector('[name="emergencynumber"]');
+      var submitBtn = form.querySelector('[type="submit"]');
+
+      if (dobInput) dobInput.max = new Date().toISOString().split('T')[0];
+
+      // Spinner
+      var spinner = document.createElement('div');
+      spinner.className = 'mt-4 text-center hidden';
+      spinner.innerHTML = '<svg class="animate-spin h-6 w-6 text-indigo-600 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg> Submitting...';
+      form.appendChild(spinner);
+
+      firstNameInput?.addEventListener('input', () => { generateUniqueId(); });
+      flatInput?.addEventListener('input', () => { generateUniqueId(); });
+      dobInput?.addEventListener('change', calculateAge);
+
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        // Community code check
+        var community = form.querySelector('[name="community"]').value;
+        if (community !== COMMUNITY_CODE) {
+          alert('Invalid community code. Please contact your admin.');
+          return;
+        }
+
+        // Basic validation
+        var fn = firstNameInput.value.trim();
+        var flat = flatInput.value.trim();
+        var email = emailInput.value.trim();
+        var flatNum = parseInt(flat);
+
+        if (!fn || !namePattern.test(fn)) { showError('firstNameError', true); return; }
+        if (!flat || isNaN(flatNum) || flatNum < 1001 || flatNum > 23188) { showError('flatError', true); return; }
+        if (!email || !emailPattern.test(email)) { showError('emailError', true); return; }
+
+        var uniqueId = document.querySelector('[name="uniqueId"]').value;
+        if (!uniqueId) { alert('Could not generate Unique ID. Please check first name and flat number.'); return; }
+
+        // Optional field validation
+        var phone = phoneInput?.value.trim();
+        if (phone && !phonePattern.test(phone)) { showError('phoneError', true); return; }
+
+        submitBtn.disabled = true;
+        spinner.classList.remove('hidden');
+
+        var dobVal = dobInput?.value || null;
+
+        const { error } = await db.from('runners').insert([{
+          unique_id: uniqueId,
+          first_name: fn,
+          last_name: lastNameInput?.value.trim() || null,
+          flat_number: flat,
+          community: COMMUNITY_CODE,
+          phone: phone || null,
+          gender: form.querySelector('[name="gender"]').value || null,
+          dob: dobVal || null,
+          tshirt_size: form.querySelector('[name="teesize"]').value || null,
+          email: email,
+          blood_group: form.querySelector('[name="bloodgroup"]').value || null,
+          emergency_contact_name: emergencyNameInput?.value.trim() || null,
+          emergency_contact_number: emergencyNumberInput?.value.trim() || null,
+        }]);
+
+        submitBtn.disabled = false;
+        spinner.classList.add('hidden');
+
+        if (error) {
+          if (error.code === '23505') {
+            alert('A runner with Unique ID "' + uniqueId + '" already exists. If this is you, your details are already registered.');
+          } else {
+            alert('Error: ' + error.message);
+          }
+          return;
+        }
+
+        alert('Registration successful! Your Unique ID is: ' + uniqueId);
+        document.getElementById('formMessage').classList.remove('hidden');
+        form.reset();
+        document.querySelector('[name="uniqueId"]').value = '';
+        document.querySelector('[name="age"]').value = '';
+        setTimeout(() => document.getElementById('formMessage').classList.add('hidden'), 4000);
+      });
+    });
+  </script>
 </body>
 </html>
-
